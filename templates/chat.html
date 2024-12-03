@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat com Megan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function sendMessage() {
+            const message = document.getElementById("message").value;
+            fetch("/send_message", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({message: message, salvar: true})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const chatBox = document.getElementById("chat-box");
+                const userMessage = document.createElement("div");
+                userMessage.classList.add("user-message");
+                userMessage.innerHTML = `<strong>Você:</strong> ${data.message}`;
+                chatBox.appendChild(userMessage);
+
+                const assistantMessage = document.createElement("div");
+                assistantMessage.classList.add("assistant-message");
+                assistantMessage.innerHTML = `<strong>Megan:</strong> ${data.response}`;
+                chatBox.appendChild(assistantMessage);
+
+                const audio = new Audio(data.audio_url);
+                audio.play();
+
+                document.getElementById("message").value = "";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById("message");
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="message" placeholder="Digite sua mensagem">
+        <button onclick="sendMessage()">Enviar</button>
+        <button onclick="window.location.href='/logout'">Logout</button>
+    </div>
+</body>
+</html>

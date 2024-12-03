@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEGAN ARTIFICIAL INTELLIGENCE - HIVE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/MeganWallp.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo branco com transparência */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin: 0 0 20px 0;
+        }
+        .login-container a.button {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            background-color: #db4437; /* Google red color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-container a.button img {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .login-container p.error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Bem-vindo!</h2>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <a class="button" href="{{ url_for('login') }}">
+            <img src="/static/google_logo.png" alt="Google Logo" width="20" height="20">
+            Entrar com Google
+        </a>
+    </div>
+</body>
+</html>

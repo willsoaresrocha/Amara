@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar-se - Megan</title>
+    <!-- Adicionar estilos conforme necessário -->
+</head>
+<body>
+    <div class="login-container">
+        <h2>Crie sua conta</h2>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/register">
+            <input type="text" name="nome" required placeholder="Nome">
+            <input type="email" name="email" required placeholder="Email">
+            
+            <label for="sexo">Sexo:</label>
+            <select name="sexo" required>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+        
+            <label for="descricao_pessoal">Descrição sobre você (opcional):</label>
+            <textarea name="descricao_pessoal" rows="3" placeholder="Fale um pouco sobre você para que eu possa te conhecer mais..."></textarea>
+        
+            <input type="password" name="senha" required placeholder="Senha">
+            <button type="submit">Registrar</button>
+        </form>
+        
+        
+        
+
+        <p>Já tem uma conta? <a href="{{ url_for('login') }}">Faça login aqui</a>.</p>
+    </div>
+</body>
+</html>

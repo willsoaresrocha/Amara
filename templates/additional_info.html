@@ -1,0 +1,73 @@
+<!-- additional_info.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Informações Adicionais - Megan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/MeganWallp.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .info-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            width: 320px;
+            text-align: center;
+        }
+        .info-container h2 {
+            margin-bottom: 20px;
+        }
+        .info-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        .info-container input[type="radio"] {
+            margin-right: 5px;
+        }
+        .info-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            resize: vertical;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .info-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        .info-container p {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-container">
+        <h2>Olá, {{ nome }}!</h2>
+        <p>Precisamos de algumas informações adicionais.</p>
+        <form method="post">
+            <label>Como você prefere ser tratado(a)?</label>
+            <label><input type="radio" name="sexo" value="M" required> Masculino</label>
+            <label><input type="radio" name="sexo" value="F"> Feminino</label>
+            <label for="descricao_pessoal">Fale um pouco sobre você (opcional):</label>
+            <textarea id="descricao_pessoal" name="descricao_pessoal" rows="4" placeholder="Conte-me mais sobre você..."></textarea>
+            <input type="submit" value="Continuar">
+        </form>
+    </div>
+</body>
+</html>

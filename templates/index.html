@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat com Megan</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 75%;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .assistant {
+            background-color: #e0e0e0;
+            align-self: flex-start;
+            color: black;
+        }
+
+        .user {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        #input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #send-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #logout-button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <button id="logout-button" onclick="logout()">Logout</button>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Digite sua mensagem..." autofocus>
+            <button id="send-button" onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para adicionar uma mensagem ao chat
+        function addMessageToChat(sender, message, type) {
+            if (!sender || !message) {
+                console.warn("Mensagem ou remetente inválido.");
+                return;
+            }
+
+            const messagesDiv = document.getElementById("messages");
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", type);
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Função para mostrar o indicador de digitação
+        function showTypingIndicator() {
+            const messagesDiv = document.getElementById("messages");
+            const typingDiv = document.createElement("div");
+            typingDiv.id = "typing-indicator";
+            typingDiv.classList.add("message", "assistant");
+            typingDiv.textContent = "Megan está digitando...";
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Função para remover o indicador de digitação
+        function removeTypingIndicator() {
+            const typingDiv = document.getElementById("typing-indicator");
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        // Função para enviar uma mensagem
+        function sendMessage() {
+            const userInput = document.getElementById("user-input");
+            const message = userInput.value;
+
+            if (message.trim() !== "") {
+                addMessageToChat("Você", message, "user");
+                showTypingIndicator();
+
+                fetch('/send_message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ "message": message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    removeTypingIndicator();
+                    if (data.response) {
+                        addMessageToChat("Megan", data.response, "assistant");
+                    } else {
+                        addMessageToChat("Megan", "Erro ao processar a resposta.", "assistant");
+                    }
+                })
+                .catch(error => {
+                    removeTypingIndicator();
+                    console.error("Erro ao enviar mensagem:", error);
+                    addMessageToChat("Megan", "Erro ao enviar mensagem.", "assistant");
+                });
+
+                userInput.value = "";
+            }
+        }
+
+        // Evento de clique no botão enviar
+        document.getElementById("send-button").addEventListener("click", sendMessage);
+
+        // Permitir envio ao pressionar Enter
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Função para carregar o histórico ou saudação inicial
+        window.onload = function() {
+            fetch('/get_greeting')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.historico && data.historico.length > 0) {
+                        data.historico.forEach(msg => {
+                            const sender = msg.role === "user" ? "Você" : "Megan";
+                            addMessageToChat(sender, msg.content, msg.role);
+                        });
+                    } else if (data.greeting) {
+                        addMessageToChat("Megan", data.greeting, "assistant");
+                    } else {
+                        console.error("Erro: Saudação não encontrada");
+                    }
+                })
+                .catch(error => console.error("Erro ao carregar histórico:", error));
+        };
+
+        // Função para logout
+        function logout() {
+            fetch('/logout').then(() => {
+                window.location.href = '/login';
+            });
+        }
+    </script>
+</body>
+</html>
